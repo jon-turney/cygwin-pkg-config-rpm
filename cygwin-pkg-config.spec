@@ -1,5 +1,5 @@
 Name:           cygwin-pkg-config
-Version:        0.29.1
+Version:        0.29.2
 Release:        1%{?dist}
 Summary:        A tool for determining compilation options
 
@@ -96,6 +96,9 @@ rm -rf ${RPM_BUILD_ROOT}%{_datadir}/doc/pkg-config
 
 
 %changelog
+* Wed Apr 01 2020 Yaakov Selkowitz <yselkowi@redhat.com> - 0.29.2-1
+- new version
+
 * Mon Sep 12 2016 Yaakov Selkowitz <yselkowi@redhat.com> - 0.29.1-1
 - new version
 
