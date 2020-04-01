@@ -8,6 +8,7 @@ Group:          Development/Tools
 URL:            http://pkgconfig.freedesktop.org
 Source0:        http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
 
+BuildRequires:  gcc
 BuildRequires:  glib2-devel
 BuildRequires:  cygwin32-filesystem >= 7
 BuildRequires:  cygwin64-filesystem >= 7
