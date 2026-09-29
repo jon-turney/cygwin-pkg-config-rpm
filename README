@@ -1,0 +1,1 @@
+This package is kept around for the benefit of EPEL8, which only has pkg-config, not pkgconf

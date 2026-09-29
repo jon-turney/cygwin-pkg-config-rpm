@@ -1,17 +1,18 @@
 Name:           cygwin-pkg-config
 Version:        0.29.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A tool for determining compilation options
 
 License:        GPLv2+
 Group:          Development/Tools
-URL:            http://pkgconfig.freedesktop.org
-Source0:        http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
+URL:            https://pkgconfig.freedesktop.org
+Source0:        https://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  glib2-devel
 BuildRequires:  cygwin32-filesystem >= 7
 BuildRequires:  cygwin64-filesystem >= 7
+BuildRequires:  cygwin-aarch64-filesystem >= 151
 
 
 %description
@@ -22,7 +23,7 @@ compiler and linker flags.
 
 # Cygwin32
 %package -n cygwin32-pkg-config
-Summary:        A tool for determining compilation options for the Cygwin32 target
+Summary:        A tool for determining compilation options for the Cygwin i686 target
 Requires:       cygwin32-filesystem >= 7
 
 %description -n cygwin32-pkg-config
@@ -32,10 +33,20 @@ compiler and linker flags.
 
 # Cygwin64
 %package -n cygwin64-pkg-config
-Summary:        A tool for determining compilation options for the Cygwin64 target
+Summary:        A tool for determining compilation options for the Cygwin x86_64 target
 Requires:       cygwin64-filesystem >= 7
 
 %description -n cygwin64-pkg-config
+The pkgconfig tool determines compilation options. For each required
+library, it reads the configuration file and outputs the necessary
+compiler and linker flags.
+
+# Cygwin-aarch64
+%package -n cygwin-aarch64-pkg-config
+Summary:        A tool for determining compilation options for the Cygwin aarch64 target
+Requires:       cygwin-aarch64-filesystem >= 7
+
+%description -n cygwin-aarch64-pkg-config
 The pkgconfig tool determines compilation options. For each required
 library, it reads the configuration file and outputs the necessary
 compiler and linker flags.
@@ -75,9 +86,24 @@ pushd build_cyg64
 popd
 
 
+mkdir build_cyg_aarch64
+pushd build_cyg_aarch64
+    %configure \
+        --disable-shared \
+        --disable-host-tool \
+        --program-prefix=%{cygwin_aarch64_target}- \
+        --with-pc-path=%{cygwin_aarch64_libdir}/pkgconfig:%{cygwin_aarch64_datadir}/pkgconfig:%{_datadir}/pkgconfig \
+	--with-system-include-path=%{cygwin_aarch64_includedir} \
+	--with-system-library-path=%{cygwin_aarch64_libdir}
+
+    make %{?_smp_mflags}
+popd
+
+
 %install
 make install -C build_cyg32 DESTDIR=$RPM_BUILD_ROOT m4dir=%{cygwin32_datadir}/aclocal
 make install -C build_cyg64 DESTDIR=$RPM_BUILD_ROOT m4dir=%{cygwin64_datadir}/aclocal
+make install -C build_cyg_aarch64 DESTDIR=$RPM_BUILD_ROOT m4dir=%{cygwin_aarch64_datadir}/aclocal
 
 # These files conflict with ordinary pkg-config.
 rm -rf ${RPM_BUILD_ROOT}%{_datadir}/doc/pkg-config
@@ -95,8 +121,17 @@ rm -rf ${RPM_BUILD_ROOT}%{_datadir}/doc/pkg-config
 %{_mandir}/man1/%{cygwin64_target}-pkg-config.1*
 %{cygwin64_datadir}/aclocal/pkg.m4
 
+%files -n cygwin-aarch64-pkg-config
+%doc AUTHORS README NEWS COPYING pkg-config-guide.html
+%{_bindir}/%{cygwin_aarch64_target}-pkg-config
+%{_mandir}/man1/%{cygwin_aarch64_target}-pkg-config.1*
+%{cygwin_aarch64_datadir}/aclocal/pkg.m4
+
 
 %changelog
+* Tue Sep 29 2026 Jon Turney <jon.turney@dronecode.org.uk>> - 0.29.2-2
+- add aarch64
+
 * Wed Apr 01 2020 Yaakov Selkowitz <yselkowi@redhat.com> - 0.29.2-1
 - new version
 
